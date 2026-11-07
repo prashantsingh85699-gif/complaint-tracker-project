@@ -8,6 +8,7 @@ function AdminDashboard() {
   const [priorityFilter, setPriorityFilter] = useState('all')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [totalComplaints, setTotalComplaints] = useState(0)
   const [error, setError] = useState('')
 
   function fetchComplaints() {
@@ -18,8 +19,9 @@ function AdminDashboard() {
 
     api.get('/complaints', { params })
       .then(res => {
-        setComplaints(res.data.complaints)
+        setComplaints(res.data.complaints || [])
         setTotalPages(res.data.pages || 1)
+        setTotalComplaints(res.data.total || (res.data.complaints ? res.data.complaints.length : 0))
       })
       .catch(() => setError('Could not load complaints'))
   }
@@ -28,9 +30,11 @@ function AdminDashboard() {
     fetchComplaints()
   }, [page, statusFilter, categoryFilter, priorityFilter])
 
-  function handleFilter() {
+  function handleReset() {
+    setStatusFilter('all')
+    setCategoryFilter('all')
+    setPriorityFilter('all')
     setPage(1)
-    // useEffect will re-fetch because page or filters changed
   }
 
   async function handleStatusChange(id, newStatus) {
@@ -42,50 +46,89 @@ function AdminDashboard() {
     }
   }
 
-  function statusClass(status) {
-    if (status === 'open') return 'status-open'
-    if (status === 'in-progress') return 'status-in-progress'
-    if (status === 'resolved') return 'status-resolved'
-    return ''
+  // Quick stats computed from current list
+  const openCount = complaints.filter(c => c.status === 'open').length
+  const inProgressCount = complaints.filter(c => c.status === 'in-progress').length
+  const resolvedCount = complaints.filter(c => c.status === 'resolved').length
+
+  function priorityClass(p) {
+    if (p === 'high') return 'badge badge-high'
+    if (p === 'medium') return 'badge badge-medium'
+    return 'badge badge-low'
   }
 
-  // cut long descriptions
-  function truncate(text, len = 50) {
+  function truncate(text, len = 60) {
     if (!text) return ''
     return text.length > len ? text.slice(0, len) + '...' : text
   }
 
   return (
     <div className="container">
+      {/* Admin Stat Overview Cards */}
+      <div className="stats-grid">
+        <div className="stat-card">
+          <span className="stat-label">Total Complaints</span>
+          <span className="stat-value">{totalComplaints}</span>
+        </div>
+        <div className="stat-card stat-open">
+          <span className="stat-label">Open</span>
+          <span className="stat-value">{openCount}</span>
+        </div>
+        <div className="stat-card stat-in-progress">
+          <span className="stat-label">In Progress</span>
+          <span className="stat-value">{inProgressCount}</span>
+        </div>
+        <div className="stat-card stat-resolved">
+          <span className="stat-label">Resolved</span>
+          <span className="stat-value">{resolvedCount}</span>
+        </div>
+      </div>
+
       <div className="form-box">
-        <h3>All Complaints</h3>
+        <h3>Complaints Management</h3>
         {error && <p className="error-msg">{error}</p>}
 
+        {/* Structured Filter Bar */}
         <div className="filter-bar">
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-            <option value="all">All Status</option>
-            <option value="open">Open</option>
-            <option value="in-progress">In Progress</option>
-            <option value="resolved">Resolved</option>
-          </select>
-          <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-            <option value="all">All Categories</option>
-            <option value="water">Water</option>
-            <option value="electricity">Electricity</option>
-            <option value="wifi">WiFi</option>
-            <option value="cleaning">Cleaning</option>
-          </select>
-          <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
-            <option value="all">All Priorities</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-          <button className="btn-primary" onClick={handleFilter}>Filter</button>
+          <div className="filter-group">
+            <label>Status</label>
+            <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}>
+              <option value="all">All Status</option>
+              <option value="open">Open</option>
+              <option value="in-progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label>Category</label>
+            <select value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}>
+              <option value="all">All Categories</option>
+              <option value="water">Water</option>
+              <option value="electricity">Electricity</option>
+              <option value="wifi">WiFi</option>
+              <option value="cleaning">Cleaning</option>
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label>Priority</label>
+            <select value={priorityFilter} onChange={(e) => { setPriorityFilter(e.target.value); setPage(1); }}>
+              <option value="all">All Priorities</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <button type="button" className="btn-secondary" onClick={handleReset}>
+            Reset Filters
+          </button>
         </div>
 
+        {/* Complaints Table */}
         {complaints.length === 0 ? (
-          <p className="no-data">No complaints found</p>
+          <p className="no-data">No complaints match the selected filters.</p>
         ) : (
           <table>
             <thead>
@@ -102,26 +145,15 @@ function AdminDashboard() {
             <tbody>
               {complaints.map(c => (
                 <tr key={c._id}>
-                  <td>{c.title}</td>
-                  <td>{truncate(c.description)}</td>
-                  <td>{c.category}</td>
-                  <td>{c.priority}</td>
+                  <td style={{ fontWeight: 600 }}>{c.title}</td>
+                  <td style={{ color: '#475569' }}>{truncate(c.description)}</td>
+                  <td><span className="category-tag">{c.category}</span></td>
+                  <td><span className={priorityClass(c.priority)}>{c.priority}</span></td>
                   <td>
                     <select
-                      className={statusClass(c.status)}
+                      className={`status-select ${c.status === 'open' ? 'badge-open' : c.status === 'in-progress' ? 'badge-in-progress' : 'badge-resolved'}`}
                       value={c.status}
                       onChange={(e) => handleStatusChange(c._id, e.target.value)}
-                      style={{
-                        padding: '4px 8px',
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        background: '#fff',
-                        cursor: 'pointer',
-                        width: 'auto',
-                        marginBottom: 0
-                      }}
                     >
                       <option value="open">Open</option>
                       <option value="in-progress">In Progress</option>
@@ -129,13 +161,14 @@ function AdminDashboard() {
                     </select>
                   </td>
                   <td>{c.createdBy?.name || 'Unknown'}</td>
-                  <td>{new Date(c.createdAt).toLocaleDateString()}</td>
+                  <td style={{ color: '#64748b' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
 
+        {/* Pagination Controls */}
         <div className="pagination">
           <button
             className="btn-primary"

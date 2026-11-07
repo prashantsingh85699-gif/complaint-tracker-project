@@ -12,7 +12,7 @@ function UserDashboard() {
 
   function fetchComplaints() {
     api.get('/complaints/my')
-      .then(res => setComplaints(res.data.complaints))
+      .then(res => setComplaints(res.data.complaints || []))
       .catch(() => setError('Could not load complaints'))
   }
 
@@ -26,7 +26,7 @@ function UserDashboard() {
     setSuccess('')
     try {
       await api.post('/complaints', { title, description, category, priority })
-      setSuccess('Complaint submitted')
+      setSuccess('Complaint submitted successfully!')
       setTitle('')
       setDescription('')
       setCategory('water')
@@ -38,61 +38,81 @@ function UserDashboard() {
   }
 
   async function handleDelete(id) {
+    if (!window.confirm('Are you sure you want to delete this open complaint?')) return
     try {
       await api.delete(`/complaints/${id}`)
       fetchComplaints()
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to delete')
+      setError(err.response?.data?.message || 'Failed to delete complaint')
     }
   }
 
-  // helper to pick the right css class for status
-  function statusClass(status) {
-    if (status === 'open') return 'status-open'
-    if (status === 'in-progress') return 'status-in-progress'
-    if (status === 'resolved') return 'status-resolved'
-    return ''
+  function statusBadge(status) {
+    if (status === 'open') return 'badge badge-open'
+    if (status === 'in-progress') return 'badge badge-in-progress'
+    if (status === 'resolved') return 'badge badge-resolved'
+    return 'badge'
+  }
+
+  function priorityClass(p) {
+    if (p === 'high') return 'badge badge-high'
+    if (p === 'medium') return 'badge badge-medium'
+    return 'badge badge-low'
   }
 
   return (
     <div className="container">
       <div className="form-box">
-        <h3>Raise a Complaint</h3>
+        <h3>Raise a New Complaint</h3>
         {error && <p className="error-msg">{error}</p>}
         {success && <p className="success-msg">{success}</p>}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            placeholder="Title"
+            placeholder="Title (e.g. Water leak in Room 204)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
           />
           <textarea
-            placeholder="Description"
+            placeholder="Describe the issue in detail..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
           />
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="water">Water</option>
-            <option value="electricity">Electricity</option>
-            <option value="wifi">WiFi</option>
-            <option value="cleaning">Cleaning</option>
-          </select>
-          <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-          <button type="submit" className="btn-primary">Submit</button>
+          <div className="form-grid">
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                Category
+              </label>
+              <select value={category} onChange={(e) => setCategory(e.target.value)}>
+                <option value="water">Water</option>
+                <option value="electricity">Electricity</option>
+                <option value="wifi">WiFi</option>
+                <option value="cleaning">Cleaning</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                Priority
+              </label>
+              <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" className="btn-primary" style={{ marginTop: '8px' }}>
+            Submit Complaint
+          </button>
         </form>
       </div>
 
       <div className="form-box">
-        <h3>My Complaints</h3>
+        <h3>My Complaints History</h3>
         {complaints.length === 0 ? (
-          <p className="no-data">No complaints yet</p>
+          <p className="no-data">You have not raised any complaints yet.</p>
         ) : (
           <table>
             <thead>
@@ -108,11 +128,11 @@ function UserDashboard() {
             <tbody>
               {complaints.map(c => (
                 <tr key={c._id}>
-                  <td>{c.title}</td>
-                  <td>{c.category}</td>
-                  <td>{c.priority}</td>
-                  <td className={statusClass(c.status)}>{c.status}</td>
-                  <td>{new Date(c.createdAt).toLocaleDateString()}</td>
+                  <td style={{ fontWeight: 600 }}>{c.title}</td>
+                  <td><span className="category-tag">{c.category}</span></td>
+                  <td><span className={priorityClass(c.priority)}>{c.priority}</span></td>
+                  <td><span className={statusBadge(c.status)}>{c.status}</span></td>
+                  <td style={{ color: '#64748b' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
                   <td>
                     {c.status === 'open' && (
                       <button className="btn-danger" onClick={() => handleDelete(c._id)}>

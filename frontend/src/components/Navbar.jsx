@@ -6,10 +6,16 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <h2>Complaint Tracker</h2>
+      <div className="nav-brand">
+        <h2>Complaint Tracker</h2>
+        {user && <span className="nav-role-badge">{user.role}</span>}
+      </div>
       {user && (
         <div className="user-info">
-          <span>{user.name}</span>
+          <span className="user-avatar" title={user.name}>
+            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+          </span>
+          <span className="user-name">{user.name}</span>
           <button className="btn-logout" onClick={logout}>Logout</button>
         </div>
       )}
