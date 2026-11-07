@@ -94,10 +94,9 @@ function AdminDashboard() {
                 <th>Description</th>
                 <th>Category</th>
                 <th>Priority</th>
-                <th>Status</th>
+                <th>Status (Change)</th>
                 <th>Created By</th>
                 <th>Date</th>
-                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -107,20 +106,30 @@ function AdminDashboard() {
                   <td>{truncate(c.description)}</td>
                   <td>{c.category}</td>
                   <td>{c.priority}</td>
-                  <td className={statusClass(c.status)}>{c.status}</td>
-                  <td>{c.createdBy?.name || 'Unknown'}</td>
-                  <td>{new Date(c.createdAt).toLocaleDateString()}</td>
                   <td>
                     <select
+                      className={statusClass(c.status)}
                       value={c.status}
                       onChange={(e) => handleStatusChange(c._id, e.target.value)}
-                      style={{ width: 'auto', marginBottom: 0 }}
+                      style={{
+                        padding: '4px 8px',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        background: '#fff',
+                        cursor: 'pointer',
+                        width: 'auto',
+                        marginBottom: 0
+                      }}
                     >
                       <option value="open">Open</option>
                       <option value="in-progress">In Progress</option>
                       <option value="resolved">Resolved</option>
                     </select>
                   </td>
+                  <td>{c.createdBy?.name || 'Unknown'}</td>
+                  <td>{new Date(c.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
