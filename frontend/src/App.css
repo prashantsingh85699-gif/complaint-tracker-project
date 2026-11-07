@@ -27,8 +27,21 @@ body {
   gap: 10px;
 }
 
+.nav-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .navbar h2 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: #0f172a;
   letter-spacing: -0.3px;
@@ -139,10 +152,10 @@ body {
 
 input, select, textarea {
   width: 100%;
-  padding: 8px 12px;
+  padding: 9px 12px;
   margin-bottom: 12px;
   border: 1px solid #cbd5e1;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 14px;
   font-family: inherit;
   color: #1e293b;
@@ -152,7 +165,7 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
 }
 
 textarea {
@@ -164,7 +177,7 @@ textarea {
 button {
   padding: 8px 16px;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -333,9 +346,9 @@ tbody tr:hover {
   background: #fee2e2;
   border: 1px solid #fecaca;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 13px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .success-msg {
@@ -343,9 +356,9 @@ tbody tr:hover {
   background: #dcfce7;
   border: 1px solid #bbf7d0;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 13px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 /* Pagination */
@@ -397,30 +410,118 @@ tbody tr:hover {
   font-size: 13px;
 }
 
-/* Auth Page */
-.auth-page {
-  max-width: 380px;
-  margin: 70px auto;
-  padding: 0 20px;
+/* Auth Pages (Login & Register) */
+.auth-wrapper {
+  min-height: calc(100vh - 65px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  background: #f1f5f9;
 }
 
-.auth-page h3 {
-  font-size: 18px;
-  font-weight: 700;
+.auth-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  padding: 32px 28px;
+  max-width: 420px;
+  width: 100%;
+}
+
+.auth-header {
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
+}
+
+.auth-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 auto 12px auto;
+  letter-spacing: -0.5px;
+}
+
+.auth-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
   border-bottom: none;
   padding-bottom: 0;
 }
 
-.auth-page a {
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: 500;
+.auth-subtitle {
+  font-size: 13px;
+  color: #64748b;
 }
 
-.auth-page a:hover {
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.form-group input {
+  margin-bottom: 0;
+}
+
+.btn-block {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.auth-footer a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
   text-decoration: underline;
+}
+
+.auth-info-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 18px;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
 }
 
 .no-data {

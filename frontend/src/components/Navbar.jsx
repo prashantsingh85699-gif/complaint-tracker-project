@@ -7,6 +7,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="nav-brand">
+        <div className="nav-logo">CT</div>
         <h2>Complaint Tracker</h2>
         {user && <span className="nav-role-badge">{user.role}</span>}
       </div>

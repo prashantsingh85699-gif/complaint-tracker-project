@@ -8,12 +8,14 @@ function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const { login } = useContext(AuthContext)
   const navigate = useNavigate()
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+    setLoading(true)
     try {
       const res = await api.post('/auth/register', { name, email, password })
       const { user, token } = res.data
@@ -21,41 +23,67 @@ function Register() {
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div className="auth-page">
-      <div className="form-box">
-        <h3>Register</h3>
-        {error && <p className="error-msg">{error}</p>}
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit" className="btn-primary">Register</button>
+    <div className="auth-wrapper">
+      <div className="auth-card">
+        <div className="auth-header">
+          <div className="auth-icon">CT</div>
+          <h3>Create an Account</h3>
+          <p className="auth-subtitle">Register to lodge complaints and track resolution status</p>
+        </div>
+
+        {error && <div className="error-msg">{error}</div>}
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Prashant Singh"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>College / Hostel Email</label>
+            <input
+              type="email"
+              placeholder="e.g. prashant@college.edu"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password (minimum 6 characters)</label>
+            <input
+              type="password"
+              placeholder="Create a secure password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+            />
+          </div>
+
+          <button type="submit" className="btn-primary btn-block" disabled={loading}>
+            {loading ? 'Registering...' : 'Create Account'}
+          </button>
         </form>
-        <p style={{ marginTop: '12px', fontSize: '13px' }}>
-          Already have an account? <Link to="/login">Login</Link>
-        </p>
+
+        <div className="auth-footer">
+          <p>
+            Already have an account? <Link to="/login">Sign in here</Link>
+          </p>
+        </div>
       </div>
     </div>
   )
