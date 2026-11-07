@@ -35,16 +35,15 @@ function Login() {
     <div className="auth-wrapper">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-icon">CT</div>
-          <h3>Welcome Back</h3>
-          <p className="auth-subtitle">Sign in to track or manage hostel and campus complaints</p>
+          <h3>Student & Staff Login</h3>
+          <p className="auth-subtitle">Hostel & Campus Grievance Redressal System</p>
         </div>
 
         {error && <div className="error-msg">{error}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label>Email Address</label>
+            <label>Registered Email Address</label>
             <input
               type="email"
               placeholder="e.g. student@college.edu"
@@ -66,20 +65,14 @@ function Login() {
           </div>
 
           <button type="submit" className="btn-primary btn-block" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Logging in...' : 'Login to Portal'}
           </button>
         </form>
 
         <div className="auth-footer">
           <p>
-            Don't have an account? <Link to="/register">Register here</Link>
+            New to the portal? <Link to="/register">Create an account</Link>
           </p>
-        </div>
-
-        <div className="auth-info-box">
-          <small>
-            <strong>Role-based access:</strong> Student accounts open the User Dashboard. Admin accounts open the Management Panel.
-          </small>
         </div>
       </div>
     </div>

@@ -32,9 +32,8 @@ function Register() {
     <div className="auth-wrapper">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-icon">CT</div>
-          <h3>Create an Account</h3>
-          <p className="auth-subtitle">Register to lodge complaints and track resolution status</p>
+          <h3>New User Registration</h3>
+          <p className="auth-subtitle">Create an account to lodge and track complaints</p>
         </div>
 
         {error && <div className="error-msg">{error}</div>}
@@ -52,7 +51,7 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label>College / Hostel Email</label>
+            <label>College / Hostel Email Address</label>
             <input
               type="email"
               placeholder="e.g. prashant@college.edu"
@@ -66,7 +65,7 @@ function Register() {
             <label>Password (minimum 6 characters)</label>
             <input
               type="password"
-              placeholder="Create a secure password"
+              placeholder="Create a strong password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
