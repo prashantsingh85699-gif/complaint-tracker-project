@@ -22,7 +22,8 @@ function Register() {
       login(user, token)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed')
+      const msg = err.response?.data?.message || err.message || 'Registration failed'
+      setError(msg)
     } finally {
       setLoading(false)
     }

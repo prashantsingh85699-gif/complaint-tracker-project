@@ -25,7 +25,8 @@ function Login() {
         navigate('/dashboard')
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password')
+      const msg = err.response?.data?.message || err.message || 'Invalid email or password'
+      setError(msg)
     } finally {
       setLoading(false)
     }

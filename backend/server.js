@@ -23,7 +23,7 @@ const corsOptions = {
     // Allow requests with no origin (like curl, Postman, mobile apps)
     if (!origin) return callback(null, true);
     const normalized = origin.replace(/\/$/, '');
-    if (allowedOrigins.includes(normalized)) {
+    if (allowedOrigins.includes(normalized) || normalized.endsWith('.vercel.app')) {
       return callback(null, true);
     }
     return callback(new Error(`CORS blocked: origin ${origin} not allowed`));
