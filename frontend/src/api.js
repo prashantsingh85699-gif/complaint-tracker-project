@@ -1,7 +1,11 @@
 import axios from 'axios';
 
-// Base URL from env or fallback to local backend (safely remove any trailing slashes)
-const rawUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000').trim().replace(/\/+$/, '');
+// Smart environment fallback: in dev use localhost:5000, in production use live Render URL
+const defaultUrl = import.meta.env.DEV
+  ? 'http://localhost:5000'
+  : 'https://complaint-tracker-project.onrender.com';
+
+const rawUrl = (import.meta.env.VITE_API_URL || defaultUrl).trim().replace(/\/+$/, '');
 const baseURL = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl}/api`;
 
 const api = axios.create({
