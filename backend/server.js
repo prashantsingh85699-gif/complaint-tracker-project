@@ -23,7 +23,10 @@ const corsOptions = {
     // Allow requests with no origin (like curl, Postman, mobile apps)
     if (!origin) return callback(null, true);
     const normalized = origin.replace(/\/$/, '');
-    if (allowedOrigins.includes(normalized) || normalized.endsWith('.vercel.app')) {
+    if (
+      allowedOrigins.includes(normalized) ||
+      normalized.includes('vercel.app')
+    ) {
       return callback(null, true);
     }
     return callback(new Error(`CORS blocked: origin ${origin} not allowed`));
@@ -35,6 +38,7 @@ const corsOptions = {
 
 // Middleware
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 // Health route (Render uses this to verify deployment)
